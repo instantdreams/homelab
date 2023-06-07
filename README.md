@@ -17,9 +17,11 @@ This grew as time went on into using Raspberry Pi devices as ad-blockers, which 
 ## Network Layout
 
 I use my 1G fibre internet connection to connect 5 servers, 2 workstations, and various networking and IoT devices using wired networking:
+
 ![Network-Physical](assets/id-network-2023-Network-Physical.png)
 
 My pi-hole devices manage my DHCP reservation and allocation, and I manage the ranges for my wireless devices:
+
 ![Network-Wireless](assets/id-network-2023-Network-Wireless.png)
 
 Having this level of control over my network is useful to avoid collisions. I could expand this in the future to include managed switches and virtual networks.
@@ -30,6 +32,7 @@ Having this level of control over my network is useful to avoid collisions. I co
 ## Servers
 
 I have five machines dedicated as servers:
+
 * **id-edge1** & **id-edge2** - edge servers
   * Raspberry Pi 4B
   * 2GB RAM
@@ -50,6 +53,7 @@ I have five machines dedicated as servers:
 The two **edge** servers run Raspberry PI OS Lite (64-bit) for a smaller footprint. The **services** and **security** servers run Debian (64-bit) headless. The **media** server runs Windows Server 2022 Standard. I access and manage all 4 linux servers using ssh. I can also access the windows server using SSH, but mostly use remote desktop.
 
 Along with the operating system, each server is installed with a base set of software applications and tools:
+
 ![Servers](assets/id-network-2023-Servers.png)
 
 I am striving to follow the [configuration as code](https://www.cloudbees.com/blog/configuration-as-code-everything-need-know) best practises, and each server has a corresponding GitHub repository that contains configuration files and documentation on how to install and configure the base operating system and the various tools needed to support the services.
@@ -57,11 +61,16 @@ I am striving to follow the [configuration as code](https://www.cloudbees.com/bl
 For the Linux servers the repositories also include individual folders containing the compose and environment files to set up each service.
 
 The steps to get the docker containers running are:
-1. Clone the repository to /srv
+1. Clone the repository to `/srv`
+
 2. For each service:
-   2.1. Copy .env.example file to .env
-   2.2. Edit the .env file for any device or service specifics
+
+   2.1. Copy `.env.example` file to `.env`
+
+   2.2. Edit the `.env` file for any device or service specifics
+
    2.3. Run `docker compose up --detach`
+
 3. Check docker container status for all services
 
 The use of .env files mean no passwords or other sensitive information are held in GitHub repositories, even if they are private.
@@ -78,103 +87,107 @@ id-edge1 | id-edge2
 ![Services-id-edge1](assets/id-network-2023-Services-91-id-edge1.png) | ![Services-id-edge2](assets/id-network-2023-Services-92-id-edge2.png)
 
 A description of the unique services:
-* acme-sh
+* **acme-sh**
   * A shell script for the Automated Certificate Management Environment - used to manually create and export wildcard certificates with LetsEncrypt as needed
-* duckdns
+* **duckdns**
   * Runs a cron job that updates DuckDNS with my current home ip address
-* npm
+* **npm**
   * Reverse proxy with a user interface with Nginx behind the scenes, can generate Letsencrypt certificates (but the Azure challenge is broken right now, hence the use of acme-sh)
-* pihole
+* **pihole**
   * Used to manage DNS, DHCP, and block ads and tracking
-* wireguard (external access)
+* **wireguard** (external access)
   * Allows remote devices (phones, laptops, tablets) to create a VPN connection to the network and use services as if they were home
 
 
 ### Services Server
 
 The following services are run on the services server:
+
 ![Services-id-services](assets/id-network-2023-Services-93-id-services-sanitised.png)
 
 A description of the unique services:
-* dashy
+* **dashy**
   * Home dashboard that shows all of the services logically grouped
-* homer
+* **homer**
   * Home dashboard that shows all of the services logically grouped
-* remotely (external access)
+* **remotely** (external access)
   * Allows someone to request a remote connection so I can fix their PC for them (perils of being in IT, right?)
-* overseer (external access)
+* **overseer** (external access)
   * Plex users can request things
-* tautulli (external access)
+* **tautulli** (external access)
   * Provides statistics and status of the Plex server
-* grocy (external access)
+* **grocy** (external access)
   * An enterprise resource planning tool for your pantry
-* nextcloud (external access)
+* **nextcloud** (external access)
   * Cloud storage for your home, has a very good mobile app
-* photoprism (external access)
+* **photoprism** (external access)
   * Photo management for your home which includes face and object recognition
-* scrutiny
+* **scrutiny**
   * Consolidated and presents SMART data from HDDs and SSDs on each server
-* uptime-kuma
+* **uptime-kuma**
   * Monitors services and endpoints, with notification
-* teslamate (external access)
+* **teslamate** (external access)
   * Logging of Tesla data, with Grafana as a visualisation tool
-* homeassistant (external access)
+* **homeassistant** (external access)
   * Consolidate all your smart home devices with full control
-* mqtt
+* **mqtt**
   * Message queue used by various services
-* node-red
+* **node-red**
   * Visual flow management tool for Internet of Things devices
-* z-wave-js-ui
+* **z-wave-js-ui**
   * Plug in to manage z-wave USB device
-* alertmanager
+* **alertmanager**
   * Sends notifications based on threshold issues found by Prometheus
-* grafana (external access)
+* **grafana** (external access)
   * Visualisation tool - creates dashboards, graphs, and other fun things
-* influxdb
+* **influxdb**
   * Time series database to capture information from services and devices
-* prometheus
+* **prometheus**
   * Time series database to capture information from services and devices
-* loki
+* **loki**
   * Log aggregation for Grafana visualisation
-* netgear-exporter
+* **netgear-exporter**
   * Exports metrics from NetGear routers
-* smartthings-metrics
+* **smartthings-metrics**
   * Exports metrics from SmartThings hubs
 
 
 ### Security Server
 
 The following services are run on the services server:
+
 ![Services-id-security](assets/id-network-2023-Services-94-id-security.png)
 
 A description of the unique services:
-* frigate
+* **frigate**
   * A network video recorder with object detection - using a Coral USB Accelerator
-* vaultwarden
+* **vaultwarden**
   * Password management (a much easier implementation of BitWarden)
-* wyze-bridge
+* **wyze-bridge**
   * Creates a bridge to any Wyze cameras and creates an RTSP stream that can be consumed by an NVR
 
 
 ### Media Server
 
-The following services are run on the services server:
+The following services are run on the media server:
+
 ![Services-id-media](assets/id-network-2023-Services-95-id-media.png)
 
 A description of the unique services:
-* calibre (external access)
+* **calibre** (external access)
   * eBook management
-* kavita (external access)
+* **kavita** (external access)
   * eBook server
-* plex (external access)
+* **plex** (external access)
   * Media server
-* windows-exporter
+* **windows-exporter**
   * Exports metrics from Windows devices
 
 
 ## External Access
 
 Certain services are exposed externally to the internet:
+
 ![Services-External](assets/id-network-2023-Services-External.png)
 
 My domain names services are managed in Azure DNS Zones. The routing is as follows:
@@ -195,6 +208,7 @@ Note that this also works internally as follows:
 5. Redirected to appropriate service
 
 In addition to the home environment there are static web apps hosted on Azure that are created with Hugo and updated on push to an appropriate repository with GitHub actions:
+
 ![External-Access](assets/id-network-2023-External-Access.png)
 
 
